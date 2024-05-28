@@ -1,19 +1,17 @@
 {
-    "manifest_version" : 3,
-    "name" : "PUP-SIS Webscraper",
-    "version" : "1.0",
-    "description" : "An extension to webscrape you information for you to help.",
-    "permissions" : [
-        "activeTab"
+    "manifest_version": 3,
+    "name": "PUP-SIS Webscraper",
+    "version": "1.0",
+    "description": "An extension to webscrape your information to help.",
+    "permissions": [
+        "activeTab",
+        "scripting" 
     ],
     "icons": {
         "48": "icons/icon_48.png"
     },
     "content_scripts": [
         {
-            "default_popup": [
-                "popup.html"
-            ],
             "matches": [
                 "https://sis2.pup.edu.ph/student/grades",
                 "https://sis1.pup.edu.ph/student/grades",
@@ -25,17 +23,15 @@
                 "https://sis8.pup.edu.ph/student/schedule"
             ],
             "js": [
-                "contentScript.js",
-                "createList.js"
-            ]   
+                "contentScript.js"
+            ]
         }
     ],
-
-    "action" : {
+    "action": {
         "default_title": "PUP SIS Webscraper",
         "default_popup": "popup.html",
-        "icons" : {
-            "16":"icons/icon_48.png"
+        "icons": {
+            "16": "icons/icon_48.png"
         }
     }
 }
