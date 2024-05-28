@@ -15,13 +15,13 @@
             <h2>PUP SIS WEBSCRAPER</h2>
             <div class="gwa-calculate-container">
                 <button id="gwa-calculate-button">Calculate GWA</button>
-                <div id="gwa"><strong>N/A</strong></div>
+                <div id="gwa"><strong>GWA: N/A</strong></div>
                 <small>(Current Semester)</small>
                 <small id="current-semester">Unknown</small>
-                <div>
-                    <span class="standing">Standing: </span><strong><span id="standingText">N/A</span></strong>
-                    <span class="latinHonorsText">Latin Honors: </span><strong><span id="latinHonorsText">N/A</span></strong>
-                    <span class="status">Status: </span><strong><span id="statusText">Regular</span></strong>
+                <div class="display-info-container">
+                    <p class="standing">Standing: </span><strong><span id="standing-display">N/A</p></strong>
+                    <p class="latinHonorsText">Latin Honors: </span><strong><span id="honors-display">N/A</p></strong>
+                    <p class="status">Status: </span><strong><span id="status-display">Regular</p></strong>
                 </div>
             </div>
             <div class="collect-profs-container">
@@ -29,6 +29,9 @@
             </div>
         </div>
     </div>
-    <script></script>
+
+    <!-- Scripts -->
+    <script src="utils/gwaCalculator.js"></script>
+    <script src="popup.js"></script>
 </body>
 </html>
