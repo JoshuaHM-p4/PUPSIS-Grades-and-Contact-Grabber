@@ -1,0 +1,16 @@
+* {
+    font-family: "Atkinson Hyperlegible", "Consolas";
+    margin: 0 auto;
+    padding: 0;
+}
+
+.collect-profs-container, .gwa-calculate-container {
+    padding: 1rem;
+    border: 1px solid gray;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#id {
+    text-align: center;
+}
