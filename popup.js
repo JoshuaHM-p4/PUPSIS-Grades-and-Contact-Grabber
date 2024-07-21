@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
+    let gwa_loaded = false;
 
-    const OVERRIDE_DEV = true;
+    const OVERRIDE_DEV = false;
 
     function handleClickEvent() {
         // Query for the active tab in the current window
@@ -46,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // GWA CALCULATE BUTTON
-    const gwa_btn = document.getElementById("gwa-calculate-btn")
+    const reload_btn = document.getElementById("reload-btn")
 
-    gwa_btn.addEventListener("click", function() {
+    reload_btn.addEventListener("click", function() {
         handleClickEvent();
     });
 
@@ -56,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'gradesFetched') {
+            // Step 1: Get the fetched grades, semester, and units
             const semester = message.data.semester;
             const grades = message.data.grades;
             const units = message.data.units;
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const gwa = window.calculateGWA(grades, units);
 
             // Step 3: Update the GWA display and Semester
-            document.getElementById("gwa-txt").innerText = `GWA: ${gwa}`;
+            document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
             document.getElementById("semester-txt").innerText = semester;
 
             // Step 4: Determine the Percentage based on the calculated GWA
@@ -88,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById("standing-txt").innerText = `${standing}`;
             document.getElementById("honors-txt").innerText = `${latinHonors}`;
             document.getElementById("status-txt").innerText = `${status}`;
+            gwa_loaded = true;
         }
     });
 });

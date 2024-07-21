@@ -5,31 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="popup.css">
     <title>PUP-SIS-Webscraper</title>
 </head>
 <body>
     <div class="div-container">
-        <div class="popup-container">
+        <div class="header-container">
             <h2>PUP SIS WEBSCRAPER</h2>
-            <div class="gwa-calculate-container">
-                <button id="gwa-calculate-btn">Calculate GWA</button>
-                <div id="gwa-txt"><strong>GWA: N/A</strong></div>
-                <small>(Current Semester)</small>
-                <small id="semester-txt">Unknown</small>
-                <div class="display-info-container">
-                    <p class="info-txt">Percentage: </span><strong><span id="percentage-txt">N/A</p></strong>
-                    <p class="info-txt">Equivalent: </span><strong><span id="equivalent-txt">N/A</p></strong>
-                    <p class="info-txt">Standing: </span><strong><span id="standing-txt">N/A</p></strong>
-                    <p class="info-txt">Latin Honors: </span><strong><span id="honors-txt">N/A</p></strong>
-                    <p class="info-txt">Status: </span><strong><span id="status-txxt">Regular</p></strong>
+        </div>
+        <div class="gwa-calculate-container">
+            <div class="summary-container">
+                <div class="semester-gwa">
+                    <small class="label" id="semester-txt">Unknown</small>
+                    <p id="gwa-txt" class="gwa">0.00 GWA</p>
+                </div>
+                <div class="sep">
+                    <!-- <button id="gwa-calculate-btn">Calculate GWA</button> -->
+                    <button id="reload-btn">
+                        <div class="reload-btn-icon">
+                            <svg class="circle" xmlns="http://www.w3.org/2000/svg" width="49" height="49" viewBox="0 0 49 49" fill="none">
+                                <circle cx="24.5" cy="24.5" r="24.5" fill="#D9D9D9"/>
+                            </svg>
+                            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                <path d="M18.7667 3.23125C16.7717 1.2375 14.0338 0 10.9931 0C4.91182 0 0 4.9225 0 11C0 17.0775 4.91182 22 10.9931 22C16.1251 22 20.404 18.4937 21.6285 13.75H18.7667C17.6385 16.9538 14.5841 19.25 10.9931 19.25C6.43902 19.25 2.73796 15.5512 2.73796 11C2.73796 6.44875 6.43902 2.75 10.9931 2.75C13.277 2.75 15.3133 3.69875 16.7992 5.1975L12.369 9.625H22V0L18.7667 3.23125Z" fill="black"/>
+                            </svg>
+                        </div>
+                    </button>
+                    <!-- <button id="download-btn">
+                        <div class="download-btn-icon">
+                            <svg class="circle" xmlns="http://www.w3.org/2000/svg" width="49" height="49" viewBox="0 0 49 49" fill="none">
+                                <circle cx="24.5" cy="24.5" r="24.5" fill="#D9D9D9"/>
+                            </svg>
+                            <svg class="arrow" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+                                <path d="M18.7667 3.23125C16.7717 1.2375 14.0338 0 10.9931 0C4.91182 0 0 4.9225 0 11C0 17.0775 4.91182 22 10.9931 22C16.1251 22 20.404 18.4937 21.6285 13.75H18.7667C17.6385 16.9538 14.5841 19.25 10.9931 19.25C6.43902 19.25 2.73796 15.5512 2.73796 11C2.73796 6.44875 6.43902 2.75 10.9931 2.75C13.277 2.75 15.3133 3.69875 16.7992 5.1975L12.369 9.625H22V0L18.7667 3.23125Z" fill="black"/>
+                            </svg>
+                        </div>
+                    </button> -->
                 </div>
             </div>
-            <div class="collect-profs-container">
-                <button id="collect-profs-btn">Collect Contacts</button>
+            <div class="info-container">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <img src="public/assets/percent.png" alt="percent" width="34px" height="34px">
+                    </div>
+                    <div class="info-label">
+                        <span class="label">Percentage: </span>
+                        <span class="info-txt" id="percentage-txt">N/A</span>
+                    </div>
+                </div class="info-item">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <img src="public/assets/equal.png" alt="equal" width="30px" height="30px">
+                    </div>
+                    <div class="info-label">
+                        <span class="label">Equivalent: </span>
+                        <span class="info-txt" id="equivalent-txt">N/A</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <img src="public/assets/status.svg" alt="status" width="32px" height="32px">
+                    </div>
+                    <div class="info-label">
+                        <span class="label">Status: </span>
+                        <span class="info-txt" id="status-txt">Regular</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <img src="public/assets/scholarship.png" alt="scholarship" width="32px" height="32px">
+                    </div>
+                    <div class="info-label"">
+                        <span class="label">Scholarship: </span>
+                        <span class="info-txt" id="scholarship-txt">N/A</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                       <img src="public/assets/standing.svg" alt="standing" width="35px" height="35px">
+                    </div>
+                    <div class="info-label">
+                        <span class="label">Standing: </span>
+                        <span class="info-txt" id="standing-txt">N/A</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <img src="public/assets/honors.png" alt="honors" width="32px" height="32px">
+                    </div>
+                    <div class="info-label">
+                        <span class="label">Latin Honors: </span>
+                        <span class="info-txt" id="honors-txt">N/A</span>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- <div class="collect-profs-container">
+            <button id="collect-profs-btn">Collect Contacts</button>
+        </div> -->
     </div>
 
     <!-- Scripts -->
