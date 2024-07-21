@@ -8,6 +8,12 @@
         "activeTab",
         "scripting"
     ],
+    "host_permissions": [
+        "*://sis2.pup.edu.ph/*",
+        "*://sis1.pup.edu.ph/*",
+        "*://sis7.pup.edu.ph/*",
+        "*://sis8.pup.edu.ph/*"
+    ],
     "icons": {
         "48": "icons/icon_48.png"
     },
