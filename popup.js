@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOMContentLoaded event fired");
+
     const OVERRIDE_DEV = true;
 
     function handleClickEvent() {
@@ -6,9 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             // Get the current tab
             const currentTab = tabs[0];
-    
+
             // Check if the OVERRIDE_DEV flag is set to true or if the current tab URL matches the specified pattern
             if (OVERRIDE_DEV || (/sis.*\/student\/grades$/).test(currentTab.url)) {
+                console.log('Current tab URL matches the pattern: ', currentTab.url);
                 // If conditions are met, execute the contentScript.js script in the current tab
                 chrome.scripting.executeScript(
                     {
@@ -40,37 +43,51 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
 
     // GWA CALCULATE BUTTON
-    document.getElementById("gwa-calculate-button").addEventListener("click", function() {
+    const gwa_btn = document.getElementById("gwa-calculate-btn")
+
+    gwa_btn.addEventListener("click", function() {
         handleClickEvent();
     });
 
+    chrome.runtime.sendMessage({ action: "injectContentScript"});
+
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'gradesFetched') {
+            const semester = message.data.semester;
             const grades = message.data.grades;
             const units = message.data.units;
 
             // Step 2: Calculate GWA from fetched grades
             const gwa = window.calculateGWA(grades, units);
 
-            // Step 3: Update the GWA display
-            document.getElementById("gwa").innerText = `GWA: ${gwa}`;
+            // Step 3: Update the GWA display and Semester
+            document.getElementById("gwa-txt").innerText = `GWA: ${gwa}`;
+            document.getElementById("semester-txt").innerText = semester;
 
-            // Step 4: Determine standing based on calculated GWA
+            // Step 4: Determine the Percentage based on the calculated GWA
+            const percentage = window.determinePercentage(gwa);
+
+            // Step 5: Determine the Eqiuvalent Grade based on the calculated GWA
+            const equivalentGrade = window.determineEquivalent(gwa);
+
+            // Step 6: Determine standing based on calculated GWA
             const standing = window.determineStanding(gwa);
 
-            // Step 5: Determine Latin Honors based on calculated GWA
+            // Step 7: Determine Latin Honors based on calculated GWA
             const latinHonors = window.determineLatinHonors(gwa);
 
-            // Step 6: Determine status (e.g., Regular, Probation) based on standing
+            // Step 8: Determine status (e.g., Regular, Probation) based on standing
             const status = window.determineStatus(standing);
 
-            // Step 7: Update the respective elements with the calculated values
-            document.getElementById("standing-display").innerText = `${standing}`;
-            document.getElementById("honors-display").innerText = `${latinHonors}`;
-            document.getElementById("status-display").innerText = `${status}`;
+            // Step 9: Update the respective elements with the calculated values
+            document.getElementById("percentage-txt").innerText = `${percentage}`;
+            document.getElementById("equivalent-txt").innerText = `${equivalentGrade}`;
+            document.getElementById("standing-txt").innerText = `${standing}`;
+            document.getElementById("honors-txt").innerText = `${latinHonors}`;
+            document.getElementById("status-txt").innerText = `${status}`;
         }
     });
 });
