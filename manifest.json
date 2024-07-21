@@ -1,11 +1,10 @@
 {
-    "manifest_version": 3,
-    "name": "PUP-SIS Webscraper",
-    "version": "1.0",
-    "description": "An extension to webscrape your information to help.",
-    "permissions": [
-        "activeTab",
-        "scripting" 
+    "manifest_version" : 3,
+    "name" : "PUP-SIS Webscraper",
+    "version" : "1.0",
+    "description" : "An extension to webscrape you information for you to help.",
+    "permissions" : [
+        "activeTab"
     ],
     "icons": {
         "48": "icons/icon_48.png"
