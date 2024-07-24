@@ -52,16 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const reload_btn = document.getElementById("reload-btn")
 
     // SELECTED TERM
-    const term_selected = document.getElementById("term-selected");
+    const term_select = document.getElementById("term-select");
+
+    // OPTIONS FOR SELECTED TERM
+
 
     reload_btn.addEventListener("click", function() {
         handleClickEvent();
     });
 
-    term_selected.addEventListener('change', () => {
-        const selectedOption = term_selected.options[term_selected.selectedIndex];
-        console.log('Selected Value:', selectedOption.value);
-        console.log('Selected Text:', selectedOption.text);
+    term_select.addEventListener('change', () => {
+        const selectedOption = term_select.options[term_select.selectedIndex];
         handleClickEvent(selectedOption.value);
     });
 
@@ -73,10 +74,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const semester = message.data.semester;
             const grades = message.data.grades;
             const units = message.data.units;
+            const usersTermsOptions = message.data.usersTermsOptions;
+
+            // Add options to the select element
+            const htmlForSelect = `
+                ${usersTermsOptions.map((option, index) => {
+                    return `<option value="${index}">${option}</option>`
+                }).join('')}
+            `
 
             // Step 2: Calculate GWA from fetched grades
             const gwa = window.calculateGWA(grades, units);
 
+            // If the term select element has no children, add the options
+            if (term_select.children.length === 0) {
+                document.getElementById("term-select").innerHTML = htmlForSelect;
+            }
             // Step 3: Update the GWA display and Semester
             document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
             document.getElementById("semester-txt").innerText = semester;

@@ -4,10 +4,23 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'getgrades') {
         let data = {};
 
-        const selectedTerm = request.term || 0;
+        const selectedTerm = request.term || 0; // Default to 0 if term is not provided
 
-        // grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
-        // two rows and find the first h3 element
+        // Get the div element containing the grades
+        const grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
+
+        // for fetching all the users options
+        const tablesRow = grades_div[0].children // [row, row]
+
+        const usersTermsOptions = [] // ["School Year 2324 Second Semester", "School Year 2324 First Semester"]
+
+        for (let i = 0; i < tablesRow.length; i++) {
+            const h3Element = findH3ElementFromTableRow(tablesRow[i]) // h3 element -> School Year 2324 Second Semester
+            if (h3Element) {
+                usersTermsOptions.push(h3Element.textContent.trim())
+                console.log(h3Element.textContent.trim())
+            }
+        }
 
         let h3Element = null;
         let tableElement = null;
@@ -21,13 +34,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         const semester = h3Element.textContent.trim();
         data.semester = semester;
+        data.usersTermsOptions = usersTermsOptions;
         if (!tableElement) {
             console.error("Table not found");
             return;
         }
 
         Object.assign(data, parseTableData(tableElement));
-
         chrome.runtime.sendMessage({
             type: "gradesFetched",
             data: data
@@ -35,12 +48,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
+// Recursive Function to find H3 Element on table row -> will return the H3 Element from the table row
+function findH3ElementFromTableRow(element) {
+    if (element.className === 'card-title') {
+        return element;
+    } else {
+        const found = findH3ElementFromTableRow(element.children[0]);
+        if (found) return found;
+        return null;
+    }
+
+}
+
+
 // Recursive Function to find H3 Element containing the Semester
 function findH3Element(element) {
     if (element.className === 'card-body') {
         const previousSibling = element.previousElementSibling;
         if (previousSibling) {
-            console.log("Previous Sibling:", previousSibling.className);
             return previousSibling.children[0];
         } else {
             return null
