@@ -4,16 +4,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'getgrades') {
         let data = {};
 
-        grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
+        const selectedTerm = request.term || 0;
+
+        // grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
+        // two rows and find the first h3 element
 
         let h3Element = null;
         let tableElement = null;
 
-        grades_div.forEach((div) => {
-            h3Element = findH3Element(div);
-            tableElement = findTableByIdPattern(div);
-        });
-
+        tableElement = findTableByIdPattern(selectedTerm);
+        h3Element = findH3Element(tableElement);
         if (!h3Element) {
             console.error("H3 Element not found");
             return;
@@ -21,8 +21,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         const semester = h3Element.textContent.trim();
         data.semester = semester;
-
-        // const tableData = document.getElementById("DataTables_Table_0");
         if (!tableElement) {
             console.error("Table not found");
             return;
@@ -39,26 +37,23 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // Recursive Function to find H3 Element containing the Semester
 function findH3Element(element) {
-    if (element.tagName === 'H3') {
-        return element;
+    if (element.className === 'card-body') {
+        const previousSibling = element.previousElementSibling;
+        if (previousSibling) {
+            console.log("Previous Sibling:", previousSibling.className);
+            return previousSibling.children[0];
+        } else {
+            return null
+        }
     }
-    for (const child of element.children) {
-        const found = findH3Element(child);
-        if (found) return found;
-    }
+    const found = findH3Element(element.parentElement);
+    if (found) return found;
     return null;
 }
 
-function findTableByIdPattern(element) {
-    const pattern = /^DataTables_Table_\d+$/;
-    if (element.tagName === 'TABLE' && pattern.test(element.id)) {
-        return element;
-    }
-    for (const child of element.children) {
-        const found = findTableByIdPattern(child);
-        if (found) return found;
-    }
-    return null;
+function findTableByIdPattern(table_number = 0) {
+    const element = document.getElementById(`DataTables_Table_${table_number}`)
+    return element
 }
 
 // Parse the table data to get the grades and units

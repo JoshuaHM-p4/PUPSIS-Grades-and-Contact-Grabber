@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOMContentLoaded event fired");
+
+    // table term
     let gwa_loaded = false;
 
     const OVERRIDE_DEV = false;
 
-    function handleClickEvent() {
+    function handleClickEvent(termSelected = 0) {
         // Query for the active tab in the current window
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
             // Get the current tab
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     () => {
                         // After executing the script, send a message to the content script to get grades
-                        chrome.tabs.sendMessage(currentTab.id, { type: 'getgrades' });
+                        chrome.tabs.sendMessage(currentTab.id, { type: 'getgrades', term: termSelected });
                     }
                 );
             } else {
@@ -49,8 +51,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // GWA CALCULATE BUTTON
     const reload_btn = document.getElementById("reload-btn")
 
+    // SELECTED TERM
+    const term_selected = document.getElementById("term-selected");
+
     reload_btn.addEventListener("click", function() {
         handleClickEvent();
+    });
+
+    term_selected.addEventListener('change', () => {
+        const selectedOption = term_selected.options[term_selected.selectedIndex];
+        console.log('Selected Value:', selectedOption.value);
+        console.log('Selected Text:', selectedOption.text);
+        handleClickEvent(selectedOption.value);
     });
 
     chrome.runtime.sendMessage({ action: "injectContentScript"});
