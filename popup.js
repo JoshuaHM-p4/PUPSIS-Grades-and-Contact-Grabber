@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const semester = message.data.semester;
             const grades = message.data.grades;
             const units = message.data.units;
+            const incompleteGrades = message.data.incompleteGrades;
             const usersTermsOptions = message.data.usersTermsOptions;
 
             // Add options to the select element
@@ -90,9 +91,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (term_select.children.length === 0) {
                 document.getElementById("term-select").innerHTML = htmlForSelect;
             }
+          
             // Step 3: Update the GWA display and Semester
             document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
             document.getElementById("semester-txt").innerText = semester;
+
+            // Step 3.1: Determine if there are incomplete grades
+            const gradesStatus = window.determineIncompleteGrades(incompleteGrades);
+            document.getElementById("grades-status-txt").innerText = `${gradesStatus}`;
 
             // Step 4: Determine the Percentage based on the calculated GWA
             const percentage = window.determinePercentage(gwa);

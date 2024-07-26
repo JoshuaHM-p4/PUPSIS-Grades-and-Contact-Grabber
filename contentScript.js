@@ -86,15 +86,16 @@ function parseTableData(tableContent) {
     const rows = tableContent.getElementsByTagName("tbody")[0].getElementsByTagName("tr"); // List of tr elements in the tbody
     const grades = [];
     const units = [];
-
+    const incompleteGrades = [];
 
     for (let i = 0; i < rows.length; i++) {
         const data = rows[i].getElementsByTagName("td"); // Get the data from each row
         const grade = data[6].textContent.trim(); // Grade is in the 7th column
         const unit = parseFloat(data[4].textContent.trim()); // Parse the unit to a float
 
-        // Handle and exclude invalid units or grades and grades with non-numeric ratings
-        if (!grade || isNaN(unit) || !/^\d+\.\d{2}$/.test(grade) ) {
+         // Handle and exclude invalid units or grades and grades with non-numeric ratings
+         if (!grade || isNaN(unit) || !/^\d+(\.\d{1,2})?$/.test(grade)) {
+            incompleteGrades.push(""); 
             continue;
         }
 
@@ -108,7 +109,8 @@ function parseTableData(tableContent) {
             grades.push(grade);
             units.push(unit);
         }
-    }
 
-    return { grades, units };
+        console.log(incompleteGrades);
+    }
+    return { grades, units, incompleteGrades };
 }
