@@ -15,6 +15,16 @@ function calculateGWA(grades, units) {
     return gwa;
 }
 
+// Determine incomplete grades
+function determineIncompleteGrades(incompleteGrades) {
+    if (incompleteGrades.length === 0) {
+        return "(Grades Completed)";
+    } else {
+        console.log(incompleteGrades)
+        return "(Grades Incompleted)";
+    }
+}
+
 // Determine the percentage of a student based on the GWA from (i.e. 97-100 for 1.00 GWA, 94-96 for 1.25 GWA, etc.)
 function determinePercentage(gwa) {
     if (1.00 <= gwa && gwa <= 1.24) {
@@ -97,6 +107,7 @@ function determineStatus(standing) {
 
 // Expose functions to be used in other scripts
 window.calculateGWA = calculateGWA;
+window.determineIncompleteGrades = determineIncompleteGrades;
 window.determinePercentage = determinePercentage;
 window.determineStanding = determineStanding;
 window.determineLatinHonors = determineLatinHonors;
