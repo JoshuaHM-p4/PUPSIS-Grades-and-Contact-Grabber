@@ -9,19 +9,23 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // Get the div element containing the grades
         const grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
 
+        // Get the dd element containing the scholastic status
+        const scholasticStatus = document.querySelector("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div > div:nth-child(2) > div > div > div.card-body > div:nth-child(1) > div:nth-child(2) > dl > dd")
+        
         // for fetching all the users options
         const tablesRow = grades_div[0].children // [row, row]
 
         const usersTermsOptions = [] // ["School Year 2324 Second Semester", "School Year 2324 First Semester"]
 
+        // Loop through the tablesRow to get the users options
         for (let i = 0; i < tablesRow.length; i++) {
             const h3Element = findH3ElementFromTableRow(tablesRow[i]) // h3 element -> School Year 2324 Second Semester
             if (h3Element) {
                 usersTermsOptions.push(h3Element.textContent.trim())
-                console.log(h3Element.textContent.trim())
             }
         }
 
+        // Get the table element containing the grades
         let h3Element = null;
         let tableElement = null;
 
@@ -32,6 +36,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             return;
         }
 
+        // Get the semester from the h3 element
         const semester = h3Element.textContent.trim();
         data.semester = semester;
         data.usersTermsOptions = usersTermsOptions;
@@ -40,6 +45,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             return;
         }
 
+        // Get the scholastic status from the dd element
+        const scholastic_status = scholasticStatus.textContent.trim();
+        data.scholastic_status = scholastic_status;
+        if (!scholastic_status) {
+            console.error("Scholastic Status not found");
+            return;
+        }
+
+        // Parse the table data to get the grades and units
         Object.assign(data, parseTableData(tableElement));
         chrome.runtime.sendMessage({
             type: "gradesFetched",
@@ -60,6 +74,17 @@ function findH3ElementFromTableRow(element) {
 
 }
 
+// Recursive Function to DD element on table row -> will return the DD Element from the table row
+function findDDElementFromTableRow(element) {
+    if (element.className === 'card-body') {
+        return element;
+    } else {
+        const found = findDDElementFromTableRow(element.children[0]);
+        if (found) return found;
+        return null;
+    }
+}
+
 
 // Recursive Function to find H3 Element containing the Semester
 function findH3Element(element) {
@@ -76,6 +101,17 @@ function findH3Element(element) {
     return null;
 }
 
+// Recursive Function to find DD Element containing the Scholastic Status
+function findDDElement(element) {
+    if (element.className === 'card-body') {
+        return element.children[0].children[1].children[0].children[1].children[0].children[1].children[0].children[1];
+    }
+    const found = findDDElement(element.parentElement);
+    if (found) return found;
+    return null;
+}
+
+// Find the table element by the id pattern
 function findTableByIdPattern(table_number = 0) {
     const element = document.getElementById(`DataTables_Table_${table_number}`)
     return element
@@ -109,8 +145,6 @@ function parseTableData(tableContent) {
             grades.push(grade);
             units.push(unit);
         }
-
-        console.log(incompleteGrades);
     }
     return { grades, units, incompleteGrades };
 }
