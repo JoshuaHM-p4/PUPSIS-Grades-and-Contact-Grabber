@@ -96,14 +96,6 @@ function determineLatinHonors(gwa) {
     }
 }
 
-// Determine the status of a student based on the standing
-function determineStatus(standing) {
-    if (standing === "Deans Lister" || standing === "President's Lister") {
-        return "Honor Student";
-    } else {
-        return "Good Student";
-    }
-}
 
 // Expose functions to be used in other scripts
 window.calculateGWA = calculateGWA;
@@ -111,4 +103,3 @@ window.determineIncompleteGrades = determineIncompleteGrades;
 window.determinePercentage = determinePercentage;
 window.determineStanding = determineStanding;
 window.determineLatinHonors = determineLatinHonors;
-window.determineStatus = determineStatus;

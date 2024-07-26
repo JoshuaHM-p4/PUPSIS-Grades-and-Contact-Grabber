@@ -70,12 +70,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'gradesFetched') {
-            // Step 1: Get the fetched grades, semester, and units
+            // Step 1: Get the fetched grades, semester, status and units,
             const semester = message.data.semester;
             const grades = message.data.grades;
             const units = message.data.units;
             const incompleteGrades = message.data.incompleteGrades;
             const usersTermsOptions = message.data.usersTermsOptions;
+            const scholastic_status = message.data.scholastic_status;
+
 
             // Add options to the select element
             const htmlForSelect = `
@@ -112,8 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Step 7: Determine Latin Honors based on calculated GWA
             const latinHonors = window.determineLatinHonors(gwa);
 
-            // Step 8: Determine status (e.g., Regular, Probation) based on standing
-            const status = window.determineStatus(standing);
+            // Step 8: Determine status based on dd element
+            const status = scholastic_status;
 
             // Step 9: Update the respective elements with the calculated values
             document.getElementById("percentage-txt").innerText = `${percentage}`;
