@@ -86,13 +86,13 @@ body {
     line-height: normal;
 }
 
-.semester-gwa > .label {
+.semester-gwa > .label, .semester-gwa > .grades-status{
     color: #FFF;
     font-size: 13px;
     font-weight: 400;
 }
 
-.gwa {
+.gwa{
     color: #FFF;
     font-size: 24px;
     font-style: normal;
