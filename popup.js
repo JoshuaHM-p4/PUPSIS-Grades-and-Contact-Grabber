@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (term_select.children.length === 0) {
                 document.getElementById("term-select").innerHTML = htmlForSelect;
             }
-
+          
             // Step 3: Update the GWA display and Semester
             document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
             document.getElementById("semester-txt").innerText = semester;
