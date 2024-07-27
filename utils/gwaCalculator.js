@@ -1,3 +1,12 @@
+// Helper function to check if all grades are not lower than 2.5
+function areAllGradesNotLowerThan2_5(gradesList) {
+    return gradesList.every((grade) => grade <= 2.5);
+}
+
+function areAllGradesNotFailed(gradesList) {
+    return gradesList.every((grade) => grade !== 5.00);
+}
+
 // Calculate the GWA of a student given the grades and units of the subjects
 function calculateGWA(grades, units) {
     let unit_total = 0;
@@ -80,30 +89,63 @@ function determineEquivalent(gwa) {
 }
 
 // Determine the standing of a student based on the GWA
-function determineStanding(gwa) {
+function determineStanding(gwa, gradesList) {
+    // Check if all grades in the gradesList are not lower than 2.5
+    const allGradesNotLowerThan2_5 = areAllGradesNotLowerThan2_5(gradesList);
 
-    if (1.00 <= gwa && gwa <= 1.50) {
-        return "President's Lister";
-    } else if (1.51 <= gwa && gwa <= 1.75) {
-        return "Dean's Lister";
-    } else {
-        return "Good Student"
+    if (allGradesNotLowerThan2_5) {
+        if (1.00 <= gwa && gwa <= 1.50) {
+            return "President's Lister";
+        } else if (1.51 <= gwa && gwa <= 1.75) {
+            return "Dean's Lister";
+        }
     }
+    return "Good Student";
 }
 
 // Determine the Latin Honors of a student based on the GWA
-function determineLatinHonors(gwa) {
-    if (1.000 <= gwa && gwa <= 1.1500) {
-        return "Summa Cum Laude";
-    } else if (1.151 <= gwa && gwa <= 1.3500) {
-        return "Magna Cum Laude";
-    } else if (1.351 <= gwa && gwa <= 1.6000) {
-        return "Cum Laude";
-    } else {
-        return "Good Student";
+function determineLatinHonors(gwa, gradesList) {
+    const allGradesNotLowerThan2_5 = areAllGradesNotLowerThan2_5(gradesList);
+
+    if (allGradesNotLowerThan2_5) {
+        if (1.000 <= gwa && gwa <= 1.15) {
+            return "Summa Cum Laude";
+        } else if (1.151 <= gwa && gwa <= 1.35) {
+            return "Magna Cum Laude";
+        } else if (1.351 <= gwa && gwa <= 1.6) {
+            return "Cum Laude";
+        }
     }
+    return "Good Student";
 }
 
+function determineScholarshipMaintenance(gwa, gradesList, yearLevel) {
+    const allGradesNotFailed = areAllGradesNotFailed(gradesList);
+
+    if (!gwa) {
+        return "N/A";
+    }
+
+    // First Year: Annual weighted average of 2.5 with no failing grades in all academic subjects.
+    if (yearLevel == "Freshman" || yearLevel == "Continuing") {
+        if (gwa <= 2.5 && allGradesNotFailed) {
+            return "Maintained";
+        }
+
+    // Second Year: Semestral weighted average of 2.5 with no failing grades in all academic subjects.
+    } else if (yearLevel == "Sophomore") {
+        if (gwa <= 2.5 && allGradesNotFailed) {
+            return "Maintained";
+        }
+
+    // Third Year and up: Passing grades in all academic subjects
+    } else if (yearLevel == "Junior" || yearLevel == "Senior") {
+        if (allGradesNotFailed) {
+            return "Maintained";
+        }
+    }
+    return "Warning";
+}
 
 // Expose functions to be used in other scripts
 window.calculateGWA = calculateGWA;
@@ -111,3 +153,4 @@ window.determineIncompleteGrades = determineIncompleteGrades;
 window.determinePercentage = determinePercentage;
 window.determineStanding = determineStanding;
 window.determineLatinHonors = determineLatinHonors;
+window.determineScholarshipMaintenance = determineScholarshipMaintenance;
