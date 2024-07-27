@@ -10,9 +10,12 @@ function calculateGWA(grades, units) {
         }
     }
 
-    let gwa = (grade_total)/unit_total;
-    gwa = gwa.toFixed(2);
-    return gwa;
+    // Calculate gwa if there are grades
+    if (grades.length > 0) {
+        let gwa = (grade_total)/unit_total;
+        gwa = gwa.toFixed(2);
+        return gwa;
+    } else{ return "0.00"; }
 }
 
 // Determine incomplete grades
@@ -20,7 +23,6 @@ function determineIncompleteGrades(incompleteGrades) {
     if (incompleteGrades.length === 0) {
         return "(Grades Completed)";
     } else {
-        console.log(incompleteGrades)
         return "(Grades Incompleted)";
     }
 }
@@ -49,7 +51,10 @@ function determinePercentage(gwa) {
         return "64-745%";
     } else if (gwa == 5.00) {
         return "0%";
-    }
+    } 
+
+    // Return 0% if the GWA is not within the range
+    return "0%";
 }
 
 // Determine the equivalent of a student based on the GWA (i.e. 1.25 - 1.00 = Excellent, 1.75-1.5 = Very Good, etc.)
@@ -69,6 +74,9 @@ function determineEquivalent(gwa) {
     } else if (gwa == 5.00) {
         return "Failed";
     }
+
+    // Return none if the GWA is not within the range
+    return "None";
 }
 
 // Determine the standing of a student based on the GWA

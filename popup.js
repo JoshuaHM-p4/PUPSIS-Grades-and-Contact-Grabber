@@ -56,16 +56,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // OPTIONS FOR SELECTED TERM
 
-
+    // Event listener for the calculate button
     reload_btn.addEventListener("click", function() {
         handleClickEvent();
     });
-
+    
+    // Term select event listener
     term_select.addEventListener('change', () => {
         const selectedOption = term_select.options[term_select.selectedIndex];
         handleClickEvent(selectedOption.value);
     });
 
+    // Inject the content script when the popup is opened
     chrome.runtime.sendMessage({ action: "injectContentScript"});
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -77,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const incompleteGrades = message.data.incompleteGrades;
             const usersTermsOptions = message.data.usersTermsOptions;
             const scholastic_status = message.data.scholastic_status;
-
 
             // Add options to the select element
             const htmlForSelect = `
