@@ -15,7 +15,7 @@
         "*://sis8.pup.edu.ph/*"
     ],
     "icons": {
-        "48": "icons/icon_48.png"
+        "48": "public/icons/icon_48.png"
     },
     "content_scripts": [
         {

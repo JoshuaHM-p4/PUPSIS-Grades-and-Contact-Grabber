@@ -7,13 +7,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         const selectedTerm = request.term || 0; // Default to 0 if term is not provided
 
         // Get the div element containing the grades
-        const grades_div = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
+        const gradesDiv = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
+
+        // Get the element containing the year level (admission status)
+        const admissionStatus = document.querySelector("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > div > div.card-body > div:nth-child(1) > div:nth-child(1) > dl > dd")
 
         // Get the dd element containing the scholastic status
         const scholasticStatus = document.querySelector("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div > div:nth-child(2) > div > div > div.card-body > div:nth-child(1) > div:nth-child(2) > dl > dd")
-        
+
         // for fetching all the users options
-        const tablesRow = grades_div[0].children // [row, row]
+        const tablesRow = gradesDiv[0].children // [row, row]
 
         const usersTermsOptions = [] // ["School Year 2324 Second Semester", "School Year 2324 First Semester"]
 
@@ -42,6 +45,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         data.usersTermsOptions = usersTermsOptions;
         if (!tableElement) {
             console.error("Table not found");
+            return;
+        }
+
+        // Get the admission status from the dd element
+        const admission_status = admissionStatus.textContent.trim();
+        data.admission_status = admission_status;
+        if (!admission_status) {
+            console.error("Admission Status not found");
             return;
         }
 
@@ -74,16 +85,6 @@ function findH3ElementFromTableRow(element) {
 
 }
 
-// Recursive Function to DD element on table row -> will return the DD Element from the table row
-function findDDElementFromTableRow(element) {
-    if (element.className === 'card-body') {
-        return element;
-    } else {
-        const found = findDDElementFromTableRow(element.children[0]);
-        if (found) return found;
-        return null;
-    }
-}
 
 
 // Recursive Function to find H3 Element containing the Semester
@@ -131,13 +132,13 @@ function parseTableData(tableContent) {
 
          // Handle and exclude invalid units or grades and grades with non-numeric ratings
          if (!grade || isNaN(unit) || !/^\d+(\.\d{1,2})?$/.test(grade)) {
-            incompleteGrades.push(""); 
+            incompleteGrades.push("");
             continue;
         }
 
         // Exclude NSTP and PATHFIT subjects
-        const subject_code = data[1].textContent.trim().toLowerCase();
-        if (subject_code.includes("cwts") || subject_code.includes("rotc") || subject_code.includes("pathfit")) {
+        const subjectCode = data[1].textContent.trim().toLowerCase();
+        if (subjectCode.includes("cwts") || subjectCode.includes("rotc") || subjectCode.includes("pathfit")) {
             continue;
         }
 

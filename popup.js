@@ -73,11 +73,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Step 1: Get the fetched grades, semester, status and units,
             const semester = message.data.semester;
             const grades = message.data.grades;
+            const yearLevel = message.data.admission_status;
             const units = message.data.units;
             const incompleteGrades = message.data.incompleteGrades;
             const usersTermsOptions = message.data.usersTermsOptions;
             const scholastic_status = message.data.scholastic_status;
 
+            const semesterText = semester.split(" ").slice(3, 5).join(" "); // This will handle and take "First Semester" and "Second Semester"
+            const year_sem = `${yearLevel} - ${semesterText}`;
 
             // Add options to the select element
             const htmlForSelect = `
@@ -93,10 +96,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (term_select.children.length === 0) {
                 document.getElementById("term-select").innerHTML = htmlForSelect;
             }
-          
+
             // Step 3: Update the GWA display and Semester
             document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
-            document.getElementById("semester-txt").innerText = semester;
+            document.getElementById("semester-txt").innerText = year_sem;
 
             // Step 3.1: Determine if there are incomplete grades
             const gradesStatus = window.determineIncompleteGrades(incompleteGrades);
@@ -109,20 +112,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const equivalentGrade = window.determineEquivalent(gwa);
 
             // Step 6: Determine standing based on calculated GWA
-            const standing = window.determineStanding(gwa);
+            const standing = window.determineStanding(gwa, grades);
 
             // Step 7: Determine Latin Honors based on calculated GWA
-            const latinHonors = window.determineLatinHonors(gwa);
+            const latinHonors = window.determineLatinHonors(gwa, grades);
 
             // Step 8: Determine status based on dd element
             const status = scholastic_status;
 
-            // Step 9: Update the respective elements with the calculated values
+            // Step 9: Determine the Scholarship Maintenance Status
+            const scholarshipMaintainenance = window.determineScholarshipMaintenance(gwa, grades, yearLevel)
+
+            // Step 10: Update the respective elements with the calculated values
             document.getElementById("percentage-txt").innerText = `${percentage}`;
             document.getElementById("equivalent-txt").innerText = `${equivalentGrade}`;
             document.getElementById("standing-txt").innerText = `${standing}`;
             document.getElementById("honors-txt").innerText = `${latinHonors}`;
             document.getElementById("status-txt").innerText = `${status}`;
+            document.getElementById("scholarship-txt").innerText = `${scholarshipMaintainenance}`;
             gwa_loaded = true;
         }
     });
