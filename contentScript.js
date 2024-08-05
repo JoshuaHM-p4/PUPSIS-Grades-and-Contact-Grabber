@@ -9,14 +9,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // Get the div element containing the grades
         const gradesDiv = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
 
-        // Get the element containing the year level (admission status)
-        const admissionStatus = document.querySelector("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div > div:nth-child(1) > div > div > div.card-body > div:nth-child(1) > div:nth-child(1) > dl > dd")
-
-        // Get the dd element containing the scholastic status
-        const scholasticStatus = document.querySelector("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div > div:nth-child(2) > div > div > div.card-body > div:nth-child(1) > div:nth-child(2) > dl > dd")
-
         // for fetching all the users options
-        const tablesRow = gradesDiv[0].children // [row, row]
+        const tablesRow = gradesDiv[0].children // [row, row] of class "col-lg-12"
 
         const usersTermsOptions = [] // ["School Year 2324 Second Semester", "School Year 2324 First Semester"]
 
@@ -47,7 +41,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             return;
         }
 
-        // Get the semester from the h3 element 
+
+        let ddElements = null;
+        ddElements = findDDElementStatus(tableElement);
+        let admissionStatus = ddElements.admission
+        let scholasticStatus = ddElements.scholastic
+
+        if (!admissionStatus || !scholasticStatus) {
+            console.error("Admission or Scholastic Status not found");
+            return;
+        }
+
+        // Get the semester from the h3 element
+
         const semester = h3Element.textContent.trim();
         data.semester = semester;
         data.usersTermsOptions = usersTermsOptions;
@@ -93,26 +99,47 @@ function findH3ElementFromTableRow(element) {
 
 }
 
-// Recursive Function to find H3 Element containing the Semester
+
+// Recursive unction to find H3 Element containing the Semester
 function findSemester(element) {
+
+// Recursive Function to find DD Element containing the Scholastic Status and Admission Status
+function findDDElementStatus(element) {
+    let status = {};
+
     if (element.className === 'card-body') {
-        const previousSibling = element.previousElementSibling;
-        if (previousSibling) {
-            return previousSibling.children[0];
-        } else {
-            return null
+        const firstRowElement = element.children[0]
+        if (firstRowElement) {
+            status.admission = firstRowElement.children[0].children[0].children[1]
+            status.scholastic = firstRowElement.children[1].children[0].children[1]
+            return status;
         }
     }
+
     const found = findSemester(element.parentElement);
+    const found = findDDElementStatus(element.parentElement);
+
     if (found) return found;
     return null;
 }
 
+
 // Recursive Function to find DD Element containing the Scholastic Status
 function findScholastisStatus(element) {
+
+
+// Recursive Function to find H3 Element containing the Semester
+function findH3Element(element) {
+
     if (element.className === 'card-body') {
-        return element.children[0].children[1].children[0].children[1].children[0].children[1].children[0].children[1];
+        const cardHeaderElement = element.previousElementSibling;
+        if (cardHeaderElement) {
+            return cardHeaderElement.children[0];
+        } else {
+            return null
+        }
     }
+
     const found = findScholastisStatus(element.parentElement);
     if (found) return found;
     return null;
@@ -129,6 +156,9 @@ function findAdmissionStatus(element) {
         }
     }
     const found = findAdmissionStatus(element.parentElement);
+
+    const found = findH3Element(element.parentElement);
+
     if (found) return found;
     return null;
 }
