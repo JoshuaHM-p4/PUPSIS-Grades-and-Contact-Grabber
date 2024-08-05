@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Default select container display
+    document.getElementById("select-container").style = `display: none;`;
 
     // GWA CALCULATE BUTTON
     const reload_btn = document.getElementById("reload-btn")
@@ -72,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (message.type === 'gradesFetched') {
-            // Step 1: Get the fetched grades, semester, status and units,
+            // Step 1: Get the fetched grades, semester, year level, units, incomplete grades, user terms options, and scholastic status
             const semester = message.data.semester;
             const grades = message.data.grades;
             const yearLevel = message.data.admission_status;
@@ -80,26 +82,32 @@ document.addEventListener('DOMContentLoaded', function() {
             const incompleteGrades = message.data.incompleteGrades;
             const usersTermsOptions = message.data.usersTermsOptions;
             const scholastic_status = message.data.scholastic_status;
+
+            // Get the year level and semester text
             const semesterText = semester.split(" ").slice(3, 5).join(" "); // This will handle and take "First Semester" and "Second Semester"
             const year_sem = `${yearLevel} - ${semesterText}`;
 
             // Add options to the select element
-            const htmlForSelect = `
+            let htmlForSelect = `
                 ${usersTermsOptions.map((option, index) => {
-                    return `<option value="${index}">${option}</option>`
+                    return `
+                    <option value="" hidden selected>Select Term</option>
+                    <option value="${index}">${option}</option>`
                 }).join('')}
             `
+
+            // If there are no options, disable the select element
+            if (term_select.children.length === 0) {
+                document.getElementById("term-select").innerHTML = htmlForSelect;
+                document.getElementById("select-container").style = `display: block;`;
+            }
 
             // Step 2: Calculate GWA from fetched grades
             const gwa = window.calculateGWA(grades, units);
 
-            // If the term select element has no children, add the options
-            if (term_select.children.length === 0) {
-                document.getElementById("term-select").innerHTML = htmlForSelect;
-            }
 
             // Step 3: Update the GWA display and Semester
-            document.getElementById("gwa-txt").innerText = `${gwa} GWA`;
+            document.getElementById("gwa-txt").innerText    = `${gwa} GWA`;
             document.getElementById("semester-txt").innerText = year_sem;
 
             // Step 3.1: Determine if there are incomplete grades

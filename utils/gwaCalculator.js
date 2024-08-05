@@ -4,7 +4,7 @@ function areAllGradesNotLowerThan2_5(gradesList) {
 }
 
 function areAllGradesNotFailed(gradesList) {
-    return gradesList.every((grade) => grade !== 5.00);
+    return gradesList.every((grade) => grade != 5.00);
 }
 
 // Calculate the GWA of a student given the grades and units of the subjects
