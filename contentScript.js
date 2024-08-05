@@ -17,17 +17,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // Loop through the tablesRow to get the users options
         for (let i = 0; i < tablesRow.length; i++) {
             const h3Element = findH3ElementFromTableRow(tablesRow[i]) // h3 element -> School Year 2324 Second Semester
-
-            // If the h3 element is found, push the textContent to the usersTermsOptions array
             if (h3Element) {
                 usersTermsOptions.push(h3Element.textContent.trim())
-            } 
-
-            // If the h3 element is not found, log an error
-            else {
-                console.error("H3 Element not found")
             }
-
         }
 
         // Get the table element containing the grades
@@ -35,12 +27,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         let tableElement = null;
 
         tableElement = findTableByIdPattern(selectedTerm);
-        h3Element = findSemester(tableElement);
+        h3Element = findH3Element(tableElement);
         if (!h3Element) {
             console.error("H3 Element not found");
             return;
         }
-
 
         let ddElements = null;
         ddElements = findDDElementStatus(tableElement);
@@ -53,7 +44,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
 
         // Get the semester from the h3 element
-
         const semester = h3Element.textContent.trim();
         data.semester = semester;
         data.usersTermsOptions = usersTermsOptions;
@@ -99,10 +89,6 @@ function findH3ElementFromTableRow(element) {
 
 }
 
-
-// Recursive unction to find H3 Element containing the Semester
-function findSemester(element) {
-
 // Recursive Function to find DD Element containing the Scholastic Status and Admission Status
 function findDDElementStatus(element) {
     let status = {};
@@ -116,21 +102,14 @@ function findDDElementStatus(element) {
         }
     }
 
-    const found = findSemester(element.parentElement);
     const found = findDDElementStatus(element.parentElement);
-
     if (found) return found;
     return null;
 }
 
 
-// Recursive Function to find DD Element containing the Scholastic Status
-function findScholastisStatus(element) {
-
-
 // Recursive Function to find H3 Element containing the Semester
 function findH3Element(element) {
-
     if (element.className === 'card-body') {
         const cardHeaderElement = element.previousElementSibling;
         if (cardHeaderElement) {
@@ -139,26 +118,7 @@ function findH3Element(element) {
             return null
         }
     }
-
-    const found = findScholastisStatus(element.parentElement);
-    if (found) return found;
-    return null;
-}
-
-// Recursive Function to find DD Element containing the Admission Status
-function findAdmissionStatus(element) {
-    if (element.className === 'card-body') {
-        const previousSibling = element.previousElementSibling;
-        if (previousSibling) {
-            return previousSibling.children[0];
-        } else {
-            return null
-        }
-    }
-    const found = findAdmissionStatus(element.parentElement);
-
     const found = findH3Element(element.parentElement);
-
     if (found) return found;
     return null;
 }
