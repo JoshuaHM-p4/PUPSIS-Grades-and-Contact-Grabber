@@ -1,10 +1,8 @@
 // Get the grades and units from the tableData element
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-
     if (request.type === 'getgrades') {
         let data = {};
-
-        const selectedTerm = request.term || 0; // Default to 0 if term is not provided
+        const selectedTerm = request.term || 0;
 
         // Get the div element containing the grades
         const gradesDiv = document.querySelectorAll("body > div > div > div > div > form > section.content > div > div > div > div.card-body > div:nth-child(2) > div")
@@ -22,54 +20,65 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
         }
 
-        // Get the table element containing the grades
-        let h3Element = null;
-        let tableElement = null;
+        // Get the grades, units, incompleteGrades, admission_status, scholastic_status
+        let grades = [];
+        let units = [];
+        let incompleteGrades = [];
+        let admission_status;
+        let scholastic_status;
 
-        tableElement = findTableByIdPattern(selectedTerm);
-        h3Element = findH3Element(tableElement);
-        if (!h3Element) {
-            console.error("H3 Element not found");
-            return;
+        // Fetch grades based on selected term
+        if (selectedTerm === 'all') {
+            // Loop through all terms and fetch grades
+            for (let i = 0; i < usersTermsOptions.length; i++) {
+                const tableElement = findTableByIdPattern(i);
+
+                // If tableElement is not found, skip to the next term
+                if (tableElement) {
+                    const termData = parseTableData(tableElement);
+                    grades = grades.concat(termData.grades);
+                    units = units.concat(termData.units);
+                    incompleteGrades = incompleteGrades.concat(termData.incompleteGrades);
+
+                    if (!admission_status || !scholastic_status) {
+                        const ddElements = findDDElementStatus(tableElement);
+                        // If admission_status is not set, set it to the latest term
+                        admission_status = ddElements.admission.textContent.trim();
+
+                        // If scholastic_status is not set, set it to the latest term
+                        scholastic_status = ddElements.scholastic.textContent.trim();
+
+                        data.semester = "- - - Overall SY & Semester";
+                        
+                    }
+                }
+            }
+        } else {
+            // Fetch grades based on selected term
+            const tableElement = findTableByIdPattern(selectedTerm);
+            if (tableElement) {
+                const termData = parseTableData(tableElement);
+                grades = termData.grades;
+                units = termData.units;
+                incompleteGrades = termData.incompleteGrades;
+
+                const h3Element = findH3Element(tableElement);
+                data.semester = h3Element.textContent.trim();
+
+                const ddElements = findDDElementStatus(tableElement);
+                admission_status = ddElements.admission.textContent.trim();
+                scholastic_status = ddElements.scholastic.textContent.trim();
+            }
         }
 
-        let ddElements = null;
-        ddElements = findDDElementStatus(tableElement);
-        let admissionStatus = ddElements.admission
-        let scholasticStatus = ddElements.scholastic
-
-        if (!admissionStatus || !scholasticStatus) {
-            console.error("Admission or Scholastic Status not found");
-            return;
-        }
-
-        // Get the semester from the h3 element
-        const semester = h3Element.textContent.trim();
-        data.semester = semester;
-        data.usersTermsOptions = usersTermsOptions;
-        if (!tableElement) {
-            console.error("Table not found");
-            return;
-        }
-
-        // Get the admission status from the dd element
-        const admission_status = admissionStatus.textContent.trim();
+        // Send the data to the popup.js
+        data.grades = grades;
+        data.units = units;
+        data.incompleteGrades = incompleteGrades;
         data.admission_status = admission_status;
-        if (!admission_status) {
-            console.error("Admission Status not found");
-            return;
-        }
-
-        // Get the scholastic status from the dd element
-        const scholastic_status = scholasticStatus.textContent.trim();
         data.scholastic_status = scholastic_status;
-        if (!scholastic_status) {
-            console.error("Scholastic Status not found");
-            return;
-        }
+        data.usersTermsOptions = usersTermsOptions;
 
-        // Parse the table data to get the grades and units
-        Object.assign(data, parseTableData(tableElement));
         chrome.runtime.sendMessage({
             type: "gradesFetched",
             data: data
@@ -77,7 +86,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
-// Recursive Function to find H3 Element on table row -> will return the H3 Element from the table row
 function findH3ElementFromTableRow(element) {
     if (element.className === 'card-title') {
         return element;
@@ -86,10 +94,8 @@ function findH3ElementFromTableRow(element) {
         if (found) return found;
         return null;
     }
-
 }
 
-// Recursive Function to find DD Element containing the Scholastic Status and Admission Status
 function findDDElementStatus(element) {
     let status = {};
 
@@ -107,8 +113,6 @@ function findDDElementStatus(element) {
     return null;
 }
 
-
-// Recursive Function to find H3 Element containing the Semester
 function findH3Element(element) {
     if (element.className === 'card-body') {
         const cardHeaderElement = element.previousElementSibling;
@@ -123,31 +127,27 @@ function findH3Element(element) {
     return null;
 }
 
-// Find the table element by the id pattern
 function findTableByIdPattern(table_number = 0) {
-    const element = document.getElementById(`DataTables_Table_${table_number}`)
-    return element
+    const element = document.getElementById(`DataTables_Table_${table_number}`);
+    return element;
 }
 
-// Parse the table data to get the grades and units
 function parseTableData(tableContent) {
-    const rows = tableContent.getElementsByTagName("tbody")[0].getElementsByTagName("tr"); // List of tr elements in the tbody
+    const rows = tableContent.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
     const grades = [];
     const units = [];
     const incompleteGrades = [];
 
     for (let i = 0; i < rows.length; i++) {
-        const data = rows[i].getElementsByTagName("td"); // Get the data from each row
-        const grade = data[6].textContent.trim(); // Grade is in the 7th column
-        const unit = parseFloat(data[4].textContent.trim()); // Parse the unit to a float
+        const data = rows[i].getElementsByTagName("td");
+        const grade = data[6].textContent.trim();
+        const unit = parseFloat(data[4].textContent.trim());
 
-         // Handle and exclude invalid units or grades and grades with non-numeric ratings
-         if (!grade || isNaN(unit) || !/^\d+(\.\d{1,2})?$/.test(grade)) {
+        if (!grade || isNaN(unit) || !/^\d+(\.\d{1,2})?$/.test(grade)) {
             incompleteGrades.push("");
             continue;
         }
 
-        // Exclude NSTP and PATHFIT subjects
         const subjectCode = data[1].textContent.trim().toLowerCase();
         if (subjectCode.includes("cwts") || subjectCode.includes("rotc") || subjectCode.includes("pathfit")) {
             continue;
