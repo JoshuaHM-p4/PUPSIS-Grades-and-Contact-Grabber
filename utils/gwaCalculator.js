@@ -108,11 +108,11 @@ function determineLatinHonors(gwa, gradesList) {
     const allGradesNotLowerThan2_5 = areAllGradesNotLowerThan2_5(gradesList);
 
     if (allGradesNotLowerThan2_5) {
-        if (1.000 <= gwa && gwa <= 1.15) {
+        if (1.0000 <= gwa && gwa <= 1.2000) {
             return "Summa Cum Laude";
-        } else if (1.151 <= gwa && gwa <= 1.35) {
+        } else if (1.2001 <= gwa && gwa <= 1.4500) {
             return "Magna Cum Laude";
-        } else if (1.351 <= gwa && gwa <= 1.6) {
+        } else if (1.4501 <= gwa && gwa <= 1.7500) {
             return "Cum Laude";
         }
     }
