@@ -86,6 +86,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
+// Find the h3 element from the table row
 function findH3ElementFromTableRow(element) {
     if (element.className === 'card-title') {
         return element;
@@ -96,6 +97,7 @@ function findH3ElementFromTableRow(element) {
     }
 }
 
+// Find the dd element from the table row
 function findDDElementStatus(element) {
     let status = {};
 
@@ -113,6 +115,7 @@ function findDDElementStatus(element) {
     return null;
 }
 
+// Find the h3 element 
 function findH3Element(element) {
     if (element.className === 'card-body') {
         const cardHeaderElement = element.previousElementSibling;
@@ -127,32 +130,38 @@ function findH3Element(element) {
     return null;
 }
 
+// Find the table element by id
 function findTableByIdPattern(table_number = 0) {
     const element = document.getElementById(`DataTables_Table_${table_number}`);
     return element;
 }
 
+// Parse table data
 function parseTableData(tableContent) {
     const rows = tableContent.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
     const grades = [];
     const units = [];
     const incompleteGrades = [];
 
+    // Loop through the rows to get the grades and units
     for (let i = 0; i < rows.length; i++) {
         const data = rows[i].getElementsByTagName("td");
         const grade = data[6].textContent.trim();
         const unit = parseFloat(data[4].textContent.trim());
 
+        // Skip if grade is empty or unit is not a number
         if (!grade || isNaN(unit) || !/^\d+(\.\d{1,2})?$/.test(grade)) {
             incompleteGrades.push("");
             continue;
         }
 
+        // Skip if subject code is CWTS, ROTC, or PATHFIT
         const subjectCode = data[1].textContent.trim().toLowerCase();
         if (subjectCode.includes("cwts") || subjectCode.includes("rotc") || subjectCode.includes("pathfit")) {
             continue;
         }
 
+        // Push the grade and unit to the array
         if (grade && !isNaN(unit)) {
             grades.push(grade);
             units.push(unit);
