@@ -40,19 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set the display of the select container to none as default
     document.getElementById("select-container").style = `display: none;`;
 
-    // Add event listener to the reload button
-    const reload_btn = document.getElementById("reload-btn");
+    // Add event listener to the download button and term select
     const term_select = document.getElementById("term-select");
-
-    reload_btn.addEventListener("click", function() {
-        handleClickEvent();
-    });
 
     // Add event listener to the term select
     term_select.addEventListener('change', () => {
         const selectedOption = term_select.options[term_select.selectedIndex];
         handleClickEvent(selectedOption.value);
     });
+
 
     // Inject the content script
     chrome.runtime.sendMessage({ action: "injectContentScript" });

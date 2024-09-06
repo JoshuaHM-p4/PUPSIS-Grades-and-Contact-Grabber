@@ -1,6 +1,12 @@
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('fonts/AtkinsonHyperlegible-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
 * {
     font-family: "Atkinson Hyperlegible", "Consolas";
-    font-weight: 400;
     margin: 0;
     padding: 0;
 }
@@ -108,7 +114,7 @@ body {
     gap: 10px;
 }
 
-.reload-btn-icon {
+.download-btn-icon {
     position: relative;
     width: 49px; /* Width of the circle */
     height: 49px; /* Height of the circle */
@@ -117,7 +123,7 @@ body {
     align-items: center;
 }
 
-#reload-btn {
+#download-btn {
     background: none;
     border:
     none;
