@@ -6,7 +6,8 @@
     "permissions" : [
         "tabs",
         "activeTab",
-        "scripting"
+        "scripting",
+        "https://sis2.pup.edu.ph/*"
     ],
     "host_permissions": [
         "*://sis2.pup.edu.ph/*",
