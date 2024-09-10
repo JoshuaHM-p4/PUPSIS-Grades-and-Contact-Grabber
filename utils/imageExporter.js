@@ -1,4 +1,3 @@
-
 // Get the button element
 const button = document.getElementById("download-btn");
 
